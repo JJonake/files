@@ -1,0 +1,151 @@
+#include<stdio.h>
+#include<stdlib.h>
+int money,ridercount,order_got,order_finished,overtime,Time;
+int map[17][17]={0};
+int start_x=8,start_y=8;     //?骑手起始坐标
+struct input
+{
+    int number,time,canteen_x,canteen_y,customer_x,customer_y;
+    struct input* nextPtr;
+}*inputlist;
+struct rider
+{
+    int x,y,ordercount,foodgot;
+    struct input* orderlist;
+}rider[64];
+struct input* input();
+void output();
+void outputtest(struct input* Inputlist);
+void run();
+void getrider();
+void orderalloc();
+void ridermove();
+int main()
+{
+    inputlist=input();
+    outputtest(inputlist);              //检测输入
+    /*if(inputlist!=NULL)                 //文本输入
+        run();*/
+}
+struct input* input()
+{
+    int number,time,canteen_x,canteen_y,customer_x,customer_y;
+    struct input *headPtr=NULL,*currentPtr=NULL,*lastPtr=NULL;
+	FILE *fin=fopen("D:/input.txt","r");                  //输入
+    if(fin==NULL)
+        return NULL;
+    while(1)
+    {
+        if(fscanf(fin,"%d%d%d%d%d%d",&number,&time,&canteen_x,&canteen_y,&customer_x,&customer_y)==6)
+   		{
+            currentPtr=(struct input*)malloc(sizeof(struct input*));
+            if(currentPtr!=NULL)
+            {
+                currentPtr->number=number;
+                currentPtr->time=time;
+                currentPtr->canteen_x=canteen_x;
+                currentPtr->canteen_y=canteen_y;
+                currentPtr->customer_x=customer_x;
+                currentPtr->customer_y=customer_y;
+                if(headPtr==NULL)
+                {
+                    headPtr=currentPtr;
+                    lastPtr=currentPtr;
+                }
+                else
+                {
+                    lastPtr->nextPtr=currentPtr;
+                    lastPtr=currentPtr;
+                }
+	        }
+        }
+        else
+            break;
+    }
+    fclose(fin);
+    if(lastPtr!=NULL)
+    	lastPtr->nextPtr=NULL;
+    return headPtr;
+}
+void output()
+{
+    int i;
+    FILE* fout=fopen("output.txt","w");
+    fprintf(fout,"时间：%d\n钱:%d\n接单数:%d\n完成数:%d\n超时数:%d\n",Time,money,order_got,order_finished,overtime);
+    for(i=0;i<ridercount;i++)
+        fprintf(fout,"骑手%d:位置:%d,%d\n",i,rider[i].x,rider[i].y);
+    fclose(fout);
+}
+void outputtest(struct input* Inputlist)
+{
+    while(Inputlist!=NULL)
+    {
+        if(Inputlist->nextPtr!=NULL)
+            printf("%d ",Inputlist->time);
+        else
+            printf("%d\n",Inputlist->time);
+       Inputlist=Inputlist->nextPtr;
+    }
+}
+/*void run()
+{
+    money=1000;
+    Time=1;
+    ridercount=0;
+    order_got=0;
+    order_finished=0;
+    overtime=0;
+    int stop=0;
+    while(!stop)
+    {
+        getrider();
+        if(inputlist->Time==Time)
+            orderalloc();
+        ridermove();
+        output();
+        Time++;
+        if(money<=0)
+            stop=1;
+    }
+}
+void getrider()
+{
+    while(money-300>=100)       //?预留资产多少
+    {
+        ridercount++;
+        money-=300;
+        rider[ridercount-1].x=start_x;
+        rider[ridercount-1].y=start_y;
+        rider[ridercount-1].ordercount=0;
+        rider[ridercount-1].foodgot=0;
+    }
+}
+void orderalloc()
+{
+    int i;
+    for(i=0;i<ridercount;i++)
+    {
+        //if()
+        {
+            rider[i].orderlist=inputlist;
+            inputlist=inputlist->nextPtr;
+        }
+    }
+}
+void ridermove()
+{
+    int i;
+    for(i=0;i<ridercount;i++)
+    if(rider[i].ordercount==0)
+    {
+
+    }
+    else if(rider[i].foodgot==0)
+    {
+        //movetorestaurant;
+    }
+    else
+    {
+        //movetocustomer;
+    }
+}*/
